@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata: 
+    name: toolbox
+    labels: 
+        app: toolbox
+spec:
+    template:
+        metadata:
+            labels:
+                app: toolbox
+        spec:
+            containers:
+                - name: toolbox
+                  image: gcr.io/wave25-vladoi/toolbox:2.0
+                                  

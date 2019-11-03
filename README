@@ -1,0 +1,37 @@
+Connecting From GKE to Cloud SQL using SQL PROXY
+ 
+Instalation Steps
+
+1. Create Kubernetes Cluster
+gcloud config set container/cluster name 
+gcloud container clusters get-credentials name --zone --project
+
+
+2. Create CloudSQL Instance (2nd Generation MySQL)
+3. Enable Google CloudSQL and API Services
+4. Create Service Account
+
+5. Create Proxy User
+gcloud sql create proxyuser cloudsqlproxy~% --instance mysql-instance --password
+
+6. Create Secrets
+kubectl create secret generic cloudsql-instance-credentials --from-file=credentials.json=proxy-key.json
+kucectl create secret generic cloudsql-db-credentials --from-literal=username=user --from-literal=password=pass
+
+7. Create/Run MySQL Deployment YAML
+kubectl create -f mysql_deployment.yml 
+
+8. Create/Run Service YAML for Cloud SQL Proxy
+kubectl create -f mysql_service.yml 
+
+9. Create toolbox image
+docker build --tag=gcr.io/project/toolbox:tag
+gcloud docker -- push gcr.io/project/toolbox:tah
+
+
+10. Create toolbox Deployment YAML
+kubectl create -f toolbox.yml 
+
+11. Connect Cloud SQL database from toolbox by using Service Name
+kubecl exec -it toolbox_container bash
+mysql -u username -p password -A -h mysql_service 
